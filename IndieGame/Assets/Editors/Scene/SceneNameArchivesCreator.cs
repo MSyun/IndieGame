@@ -14,9 +14,10 @@ public class SceneNameArchivesCreator {
 	#region variable
 
 	private const string _commandDir = "Custom/CreateArchives/Scene";
+	private const string namespaceName = "MSyun.Common.Scene";
 
 	// 書き出しのディレクトリ
-	private const string _exportDir = "Assets/Scripts/Fixed/SCENE.cs";
+	private const string _exportDir = "Assets/Scripts/Common/Scene/SceneName.cs";
 
 	// ファイル名（拡張子あり・なし
 	private static readonly string _fileName = System.IO.Path.GetFileName(_exportDir);
@@ -78,7 +79,7 @@ public class SceneNameArchivesCreator {
 	/// <param name="Builder">格納する文字列</param>
 	private static void CreateClass(StringBuilder Builder) {
 		Builder.AppendLine("using System.Collections.Generic;\n\n");
-		Builder.AppendLine("namespace Archive {\n");
+		Builder.AppendLine("namespace " + namespaceName + " {\n");
 		Builder.AppendLine("\t/// <summary>");
 		Builder.AppendLine("\t/// シーン名を定数で管理するクラス");
 		Builder.AppendLine("\t/// </summary>");
@@ -117,7 +118,7 @@ public class SceneNameArchivesCreator {
 			Builder.Append("\t\t").AppendFormat(@"public const string SCENE_{0} = ""{1}"";", name.ToUpper(), name).AppendLine();
 
 		// ディクショナリ作成
-		Builder.AppendLine("\n\t\tpublic static Dictionary<Scene, string> SceneName = new Dictionary<Scene, string> {");
+		Builder.AppendLine("\n\t\tpublic static Dictionary<Scene, string> NameDic = new Dictionary<Scene, string> {");
 		Builder.AppendLine("\t\t\t{Scene.NONE, \"\"},");
 		foreach (string name in SceneNames)
 			Builder.Append("\t\t\t").AppendFormat(@"{{Scene.{0}, SCENE_{0}}},", name.ToUpper()).AppendLine();

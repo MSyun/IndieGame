@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 
 
-namespace Archive {
+namespace MSyun.Common.Scene {
 
 	/// <summary>
 	/// シーン名を定数で管理するクラス
 	/// </summary>
-	public static class SCENE {
+	public static class SceneName {
 
 		#region enum
 
@@ -25,7 +25,7 @@ namespace Archive {
 
 		public const string SCENE_TITLE = "Title";
 
-		public static Dictionary<Scene, string> SceneName = new Dictionary<Scene, string> {
+		public static Dictionary<Scene, string> NameDic = new Dictionary<Scene, string> {
 			{Scene.NONE, ""},
 			{Scene.TITLE, SCENE_TITLE},
 		};
