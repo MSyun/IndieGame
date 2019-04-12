@@ -1,33 +1,36 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UniRx.Async;
 
 namespace MSyun.Common.Resource {
-	public class ResourceManager : MonoBehaviour {
+	public class ResourceManager {
+		private ResourcePool pool = new ResourcePool();
+
 		public T Load<T>(string path) where T : Object {
-			return Resources.Load<T>(path);
+			var asset = this.pool.Request(path);
+
+			if (asset == null)
+				return null;
+
+			return asset as T;
 		}
 
-		public T LoadAsync<T>(string path) where T : Object {
-			T data = null;
-			StartCoroutine(this.LoadAsyncEnum<T>(path, data));
-			return data;
+		public async UniTask<T> LoadAsync<T>(string path) where T : Object {
+			var asset = await this.pool.RequestAsync(path);
+
+			if (asset == null)
+				return null;
+
+			return asset as T;
 		}
 
-		public void Unload(Object asset) {
-			Resources.UnloadAsset(asset);
+		public void Unload(string path) {
+			this.pool.Unload(path);
 		}
 
-		private IEnumerator LoadAsyncEnum<T>(string path, T data) where T : Object {
-			var request = Resources.LoadAsync<T>(path);
-
-			while (!request.isDone) {
-				Debug.Log("Loading progress:" + request.progress.ToString());
-				yield return null;
-			}
-
-			data = request.asset as T;
+		public async UniTask UnloadAll() {
+			await this.pool.UnloadAll();
 		}
 	}
 }
