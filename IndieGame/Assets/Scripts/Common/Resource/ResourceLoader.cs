@@ -4,7 +4,7 @@ using UnityEngine;
 using UniRx.Async;
 
 namespace MSyun.Common.Resource {
-	public class ResourceLoader {
+	public sealed class ResourceLoader {
 
 		public Object Load(string path) {
 			return Resources.Load<Object>(path);

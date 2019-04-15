@@ -4,7 +4,7 @@ using UnityEngine;
 using UniRx.Async;
 
 namespace MSyun.Common.Resource {
-	public class ResourceManager {
+	public sealed class ResourceManager {
 		private ResourcePool pool = new ResourcePool();
 
 		public T Load<T>(string path) where T : Object {
