@@ -4,7 +4,7 @@ using UnityEngine;
 using UniRx.Async;
 
 namespace MSyun.Common.Resource {
-	public class ResourcePool {
+	public sealed class ResourcePool {
 		private Dictionary<string, Object> resources = new Dictionary<string, Object>();
 
 		private ResourceLoader loader = new ResourceLoader();
@@ -16,7 +16,7 @@ namespace MSyun.Common.Resource {
 
 			var asset = loader.Load(path);
 			if (asset == null) {
-				Debug.LogError("Resources Load : " + path);
+				Debug.LogError("Resources Load : Not Found " + path);
 				return null;
 			}
 
@@ -31,7 +31,7 @@ namespace MSyun.Common.Resource {
 
 			var asset = await loader.LoadAsync(path);
 			if (asset == null) {
-				Debug.LogError("Resources LoadAsync : " + path);
+				Debug.LogError("Resources LoadAsync : Not Found" + path);
 				return null;
 			}
 
