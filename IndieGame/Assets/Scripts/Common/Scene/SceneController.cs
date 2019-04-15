@@ -2,17 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UniRx.Async;
+using System;
 
 namespace MSyun.Common.Scene {
 
 	using Fade;
 
-	public class SceneController {
+	public sealed class SceneController {
 
 		private ISceneFade fade;
 
-		public SceneName.Scene CurrentScene { private set; get; }
-		public SceneName.Scene PreviewScene { private set; get; }
+		private SceneName.Scene NextScene = SceneName.Scene.NONE;
+		[SerializeField]
+		private SceneName.Scene currentScene = SceneName.Scene.TITLE;
+		[SerializeField]
+		private SceneName.Scene prevScene = SceneName.Scene.NONE;
+		public SceneName.Scene CurrentScene
+		{
+			private set { this.currentScene = value; }
+			get { return this.currentScene; }
+		}
+		public SceneName.Scene PreviewScene
+		{
+			private set { this.prevScene = value; }
+			get { return this.prevScene; }
+		}
 
 		public void LoadScene(string name, LoadSceneMode mode = LoadSceneMode.Single) {
 			SceneManager.LoadScene(name, mode);
@@ -22,20 +37,32 @@ namespace MSyun.Common.Scene {
 			SceneManager.LoadScene(num, mode);
 		}
 
-		public void LoadSceneAsync(string name, LoadSceneMode mode = LoadSceneMode.Single) {
-			var operation = SceneManager.LoadSceneAsync(name, mode);
+		public async void LoadSceneAsync(string name, Action callback, LoadSceneMode mode = LoadSceneMode.Single) {
+			await SceneManager.LoadSceneAsync(name, mode).
+				ConfigureAwait(Progress.Create<float>(x => Debug.Log(x)));
+
+			callback?.Invoke();
 		}
 
-		public void LoadSceneAsync(int num, LoadSceneMode mode = LoadSceneMode.Single) {
-			var operation = SceneManager.LoadSceneAsync(num, mode);
+		public async void LoadSceneAsync(int num, Action callback, LoadSceneMode mode = LoadSceneMode.Single) {
+			await SceneManager.LoadSceneAsync(num, mode).
+				ConfigureAwait(Progress.Create<float>(x => Debug.Log(x)));
+
+			callback?.Invoke();
 		}
 
-		public void UnloadSceneAsync(string name) {
-			var operation = SceneManager.UnloadSceneAsync(name);
+		public async void UnloadSceneAsync(string name, Action callback) {
+			await SceneManager.UnloadSceneAsync(name).
+				ConfigureAwait(Progress.Create<float>(x => Debug.Log(x)));
+
+			callback?.Invoke();
 		}
 
-		public void UnloadSceneAsync(int num) {
-			var operation = SceneManager.UnloadSceneAsync(num);
+		public async void UnloadSceneAsync(int num, Action callback) {
+			await SceneManager.UnloadSceneAsync(num).
+				ConfigureAwait(Progress.Create<float>(x => Debug.Log(x)));
+
+			callback?.Invoke();
 		}
 	}
 }

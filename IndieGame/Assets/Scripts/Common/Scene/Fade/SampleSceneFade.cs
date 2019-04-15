@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace MSyun.Common.Scene.Fade {
-	public class SampleSceneFade : ISceneFade {
+	public sealed class SampleSceneFade : ISceneFade {
 		public override void FadeIn() {
 			
 		}
