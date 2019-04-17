@@ -17,6 +17,7 @@ namespace MSyun.Common.Scene {
 		public enum Scene {
 			NONE,
 			TITLE,
+			PERMANENTRY,
 		}
 
 		#endregion enum
@@ -24,10 +25,12 @@ namespace MSyun.Common.Scene {
 		#region variable
 
 		public const string SCENE_TITLE = "Title";
+		public const string SCENE_PERMANENTRY = "Permanentry";
 
 		public static Dictionary<Scene, string> NameDic = new Dictionary<Scene, string> {
 			{Scene.NONE, ""},
 			{Scene.TITLE, SCENE_TITLE},
+			{Scene.PERMANENTRY, SCENE_PERMANENTRY},
 		};
 
 		#endregion variable
