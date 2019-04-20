@@ -24,8 +24,8 @@ namespace MSyun.Common.Permanentry {
 		}
 		#endregion // singleton
 
-		public ResourceManager ResourceManager;
-		public SceneController SceneController;
+		public ResourceManager ResourceManager { private set; get; }
+		public SceneController SceneManager { private set; get; }
 
 		private void Awake() {
 			if (!this.Create()) {
@@ -34,11 +34,11 @@ namespace MSyun.Common.Permanentry {
 			}
 
 			this.ResourceManager = new ResourceManager();
-			this.SceneController = new SceneController();
+			this.SceneManager = new SceneController();
 		}
 
 		private void OnDestroy() {
-			this.SceneController = null;
+			this.SceneManager = null;
 			this.ResourceManager = null;
 			instance = null;
 		}
