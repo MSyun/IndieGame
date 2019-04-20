@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace MSyun.Common.Permanentry {
+	using UnityEngine.SceneManagement;
 	using Scene;
 
 	public class PermanentryCreater : MonoBehaviour {
@@ -10,7 +11,7 @@ namespace MSyun.Common.Permanentry {
 			if (PermanentryManager.Instance != null)
 				return;
 
-			SceneController.LoadScene((int)SceneName.Scene.PERMANENTRY, true);
+			SceneManager.LoadScene((int)SceneName.Scene.PERMANENTRY, LoadSceneMode.Additive);
 		}
 	}
 }

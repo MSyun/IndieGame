@@ -13,56 +13,63 @@ namespace MSyun.Common.Scene {
 
 		private ISceneFade fade;
 
-		[SerializeField]
-		private SceneName.Scene prevScene = SceneName.Scene.NONE;
-		[SerializeField]
-		private SceneName.Scene currentScene = SceneName.Scene.TITLE;
-		private SceneName.Scene NextScene = SceneName.Scene.NONE;
+		private const int MaxSceneCount = 5;
 
-		public SceneName.Scene PreviewScene {
-			private set { this.prevScene = value; }
+		[SerializeField]
+		private List<SceneName.Scene> prevScene = new List<SceneName.Scene>(MaxSceneCount);
+		[SerializeField]
+		private List<SceneName.Scene> currentScene = new List<SceneName.Scene>(MaxSceneCount);
+
+		public List<SceneName.Scene> PreviewScene {
 			get { return this.prevScene; }
 		}
-		public SceneName.Scene CurrentScene
+		public List<SceneName.Scene> CurrentScene
 		{
-			private set { this.currentScene = value; }
 			get { return this.currentScene; }
 		}
 
-		public static void LoadScene(string name, bool add = false) {
-			SceneManager.LoadScene(name, add ? LoadSceneMode.Additive : LoadSceneMode.Single);
+		public void LoadScene(SceneName.Scene name, bool add = false) {
+			if (!add) {
+				this.prevScene.Clear();
+				this.prevScene.AddRange(this.currentScene);
+			}
+
+			SceneManager.LoadScene((int)name, add ? LoadSceneMode.Additive : LoadSceneMode.Single);
+
+			this.ChangeSceneList(name, add);
 		}
 
-		public static void LoadScene(int num, bool add = false) {
-			SceneManager.LoadScene(num, add ? LoadSceneMode.Additive : LoadSceneMode.Single);
-		}
+		public async void LoadSceneAsync(SceneName.Scene name, Action<string> callback, bool add = false) {
+			if (!add) {
+				this.prevScene.Clear();
+				this.prevScene.AddRange(this.currentScene);
+			}
 
-		public async void LoadSceneAsync(string name, Action<string> callback, bool add = false) {
-			await SceneManager.LoadSceneAsync(name, add ? LoadSceneMode.Additive : LoadSceneMode.Single).
+			await SceneManager.LoadSceneAsync((int)name, add ? LoadSceneMode.Additive : LoadSceneMode.Single).
 				ConfigureAwait(Progress.Create<float>(x => Debug.Log(x)));
+
+			this.ChangeSceneList(name, add);
 
 			callback("Load Scene Complete : " + name);
 		}
 
-		public async void LoadSceneAsync(int num, Action<string> callback, bool add = false) {
-			await SceneManager.LoadSceneAsync(num, add ? LoadSceneMode.Additive : LoadSceneMode.Single).
+		public async void UnloadSceneAsync(SceneName.Scene name, Action<string> callback) {
+			await SceneManager.UnloadSceneAsync((int)name).
 				ConfigureAwait(Progress.Create<float>(x => Debug.Log(x)));
 
-			callback("Load Scene Complete : " + num);
-		}
-
-		public async void UnloadSceneAsync(string name, Action<string> callback) {
-			await SceneManager.UnloadSceneAsync(name).
-				ConfigureAwait(Progress.Create<float>(x => Debug.Log(x)));
+			this.currentScene.Remove(name);
 
 			callback("Unload Scene Complete : " + name);
 		}
 
-		public async void UnloadSceneAsync(int num, Action<string> callback) {
-			await SceneManager.UnloadSceneAsync(num).
-				ConfigureAwait(Progress.Create<float>(x => Debug.Log(x)));
-
-			callback("Unload Scene Complete : " + num);
+		private void ChangeSceneList(SceneName.Scene name, bool add) {
+			if (!add) {
+				this.currentScene.Clear();
+				this.currentScene.Add(name);
+			}
+			else {
+				this.currentScene.Add(name);
+			}
 		}
 	}
 }
