@@ -14,8 +14,8 @@ namespace MSyun.Common.Scene {
 		/// アクティブなシーン
 		/// </summary>
 		[System.Serializable]
-		public enum Scene {
-			NONE,
+		public enum Scene : int {
+			NONE = -1,
 			TITLE,
 			PERMANENTRY,
 		}

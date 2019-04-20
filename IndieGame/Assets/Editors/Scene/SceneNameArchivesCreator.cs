@@ -97,8 +97,8 @@ public class SceneNameArchivesCreator {
 		Builder.AppendLine("\t\t/// アクティブなシーン");
 		Builder.AppendLine("\t\t/// </summary>");
 		Builder.AppendLine("\t\t[System.Serializable]");
-		Builder.AppendLine("\t\tpublic enum Scene {");
-		Builder.AppendLine("\t\t\tNONE,");
+		Builder.AppendLine("\t\tpublic enum Scene : int {");
+		Builder.AppendLine("\t\t\tNONE = -1,");
 		foreach (string name in SceneNames)
 			Builder.Append("\t\t\t").AppendFormat(@"{0},", name.ToUpper()).AppendLine();
 		Builder.AppendLine("\t\t}");
