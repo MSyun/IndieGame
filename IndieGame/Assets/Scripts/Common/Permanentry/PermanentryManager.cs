@@ -11,7 +11,7 @@ namespace MSyun.Common.Permanentry {
 
 		#region singleton
 		private static PermanentryManager instance;
-		public static PermanentryManager Instance;
+		public static PermanentryManager Instance { get { return instance; } }
 
 		protected bool Create() {
 			if (instance != null) {
