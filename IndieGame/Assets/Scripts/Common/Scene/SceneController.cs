@@ -53,7 +53,7 @@ namespace MSyun.Common.Scene {
 
 			this.OnBeginLoadScene.Invoke();
 			await SceneManager.LoadSceneAsync((int)name, add ? LoadSceneMode.Additive : LoadSceneMode.Single).
-				ConfigureAwait(Progress.Create<float>(x => Debug.Log(x)));
+				ConfigureAwait(Progress.Create<float>(x => Debug.Log("Loading late : " + x)));
 			this.OnEndLoadScene.Invoke();
 
 			this.ChangeSceneList(name, add);
