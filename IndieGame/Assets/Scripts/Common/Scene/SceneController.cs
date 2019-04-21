@@ -4,14 +4,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UniRx.Async;
 using System;
+using UnityEngine.Events;
 
 namespace MSyun.Common.Scene {
 
-	using Fade;
-
 	public sealed class SceneController {
-
-		private ISceneFade fade;
 
 		private const int MaxSceneCount = 5;
 
@@ -28,25 +25,36 @@ namespace MSyun.Common.Scene {
 			get { return this.currentScene; }
 		}
 
-		public void LoadScene(SceneName.Scene name, bool add = false) {
+		public UnityEvent OnBeginLoadScene { private set; get; } = new UnityEvent();
+		public UnityEvent OnEndLoadScene { private set; get; } = new UnityEvent();
+
+		public void LoadScene(SceneName.Scene name, bool add = false, bool fade = true) {
 			if (!add) {
 				this.prevScene.Clear();
 				this.prevScene.AddRange(this.currentScene);
 			}
 
+			this.OnBeginLoadScene.Invoke();
 			SceneManager.LoadScene((int)name, add ? LoadSceneMode.Additive : LoadSceneMode.Single);
+			this.OnEndLoadScene.Invoke();
 
 			this.ChangeSceneList(name, add);
 		}
 
-		public async void LoadSceneAsync(SceneName.Scene name, Action<string> callback, bool add = false) {
+		public async UniTask LoadSceneAsync(
+			SceneName.Scene name,
+			Action<string> callback,
+			bool add = false,
+			bool fade = true) {
 			if (!add) {
 				this.prevScene.Clear();
 				this.prevScene.AddRange(this.currentScene);
 			}
 
+			this.OnBeginLoadScene.Invoke();
 			await SceneManager.LoadSceneAsync((int)name, add ? LoadSceneMode.Additive : LoadSceneMode.Single).
 				ConfigureAwait(Progress.Create<float>(x => Debug.Log(x)));
+			this.OnEndLoadScene.Invoke();
 
 			this.ChangeSceneList(name, add);
 
