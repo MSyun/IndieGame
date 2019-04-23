@@ -6,7 +6,7 @@ namespace MSyun.Common.Input {
 
 	using Controller;
 
-	public class GameController : MonoBehaviour {
+	public class GameController {
 
 		public enum Type {
 			Pc,
@@ -19,11 +19,11 @@ namespace MSyun.Common.Input {
 
 		private IController[] controllers = new IController[MaxPlayerCount];
 
-		private void Awake() {
+		public void Initialize() {
 			this.Add(Type.Pc);
 		}
 
-		private void OnDestroy() {
+		public void Release() {
 			for(int i = 0; i < this.controllers.Length; i++) {
 				if (this.controllers[i] == null)
 					continue;
@@ -95,7 +95,7 @@ namespace MSyun.Common.Input {
 			return this.controllers[playerNum];
 		}
 
-		void Update() {
+		public void Update() {
 			foreach (var controller in this.controllers) {
 				controller.KeyCheck();
 			}

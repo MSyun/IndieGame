@@ -6,6 +6,7 @@ namespace MSyun.Common.Permanentry {
 
 	using Resource;
 	using Scene;
+	using Input;
 
 	public class PermanentryManager : MonoBehaviour {
 
@@ -26,6 +27,7 @@ namespace MSyun.Common.Permanentry {
 
 		public ResourceManager ResourceManager { private set; get; }
 		public SceneController SceneManager { private set; get; }
+		public GameController GameController { private set; get; }
 
 		private void Awake() {
 			if (!this.Create()) {
@@ -35,9 +37,17 @@ namespace MSyun.Common.Permanentry {
 
 			this.ResourceManager = new ResourceManager();
 			this.SceneManager = new SceneController();
+			this.GameController = new GameController();
+			this.GameController.Initialize();
+		}
+
+		private void Update() {
+			this.GameController.Update();
 		}
 
 		private void OnDestroy() {
+			this.GameController.Release();
+			this.GameController = null;
 			this.SceneManager = null;
 			this.ResourceManager = null;
 			instance = null;
