@@ -4,8 +4,8 @@ using UniRx.Async;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace MSyun.Common.Scene.Fade {
-	public sealed class SampleSceneFade : ISceneFade {
+namespace MSyun.Common.Fade {
+	public sealed class SampleFade : IFade {
 
 		private Image image;
 

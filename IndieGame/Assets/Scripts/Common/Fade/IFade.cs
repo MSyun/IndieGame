@@ -6,8 +6,8 @@ using UniRx.Async;
 using System.Threading.Tasks;
 using UnityEngine.UI;
 
-namespace MSyun.Common.Scene.Fade {
-	public abstract class ISceneFade {
+namespace MSyun.Common.Fade {
+	public abstract class IFade {
 
 		protected UnityEvent onBeginFadeIn = new UnityEvent();
 		protected UnityEvent onEndFadeIn = new UnityEvent();
