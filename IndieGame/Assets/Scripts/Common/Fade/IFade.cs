@@ -1,76 +1,96 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Events;
-using UniRx.Async;
-using System.Threading.Tasks;
-using UnityEngine.UI;
 
 namespace MSyun.Common.Fade {
 	public abstract class IFade {
 
-		protected UnityEvent onBeginFadeIn = new UnityEvent();
-		protected UnityEvent onEndFadeIn = new UnityEvent();
-		protected UnityEvent onBeginFadeOut = new UnityEvent();
-		protected UnityEvent onEndFadeOut = new UnityEvent();
+		public UnityEvent OnEndFadeOut = new UnityEvent();
+		public UnityEvent OnEndFadeIn = new UnityEvent();
 
-		public void AddBeginFadeInEvent(UnityAction func) {
-			onBeginFadeIn.AddListener(func);
-		}
+		protected bool isPlay = false;
+		protected bool isReverse = false;
 
-		public void RemoveBeginFadeInEvent(UnityAction func) {
-			onBeginFadeIn.RemoveListener(func);
-		}
+		/// <summary>
+		/// 0.0 ~ 1.0
+		/// </summary>
+		protected float curSeconds = 0.0f;
+		protected float fadeSeconds = 1.0f;
 
-		public void AddEndFadeInEvent(UnityAction func) {
-			onEndFadeIn.AddListener(func);
-		}
+		public virtual void Initialize(bool reverse = false) {
+			this.isPlay = false;
+			this.isReverse = reverse;
 
-		public void RemoveEndFadeInEvent(UnityAction func) {
-			onEndFadeIn.RemoveListener(func);
-		}
-
-		public void AddBeginFadeOutEvent(UnityAction func) {
-			onBeginFadeOut.AddListener(func);
-		}
-
-		public void RemoveBeginFadeOutEvent(UnityAction func) {
-			onBeginFadeOut.RemoveListener(func);
-		}
-
-		public void AddEndFadeOutEvent(UnityAction func) {
-			onEndFadeOut.AddListener(func);
-		}
-
-		public void RemoveEndFadeOutEvent(UnityAction func) {
-			onEndFadeOut.RemoveListener(func);
-		}
-
-		public void FadeIn(float seconds = 1.0f) {
-			this.onBeginFadeIn.Invoke();
-			this.onBeginFadeIn.RemoveAllListeners();
-
-			this.UniqueFadeIn(seconds);
-
-			this.onEndFadeIn.Invoke();
-			this.onEndFadeIn.RemoveAllListeners();
-		}
-
-		public void FadeOut(float seconds = 1.0f) {
-			this.onBeginFadeOut.Invoke();
-			this.onBeginFadeOut.RemoveAllListeners();
-
-			this.UniqueFadeOut(seconds);
-
-			this.onEndFadeOut.Invoke();
-			this.onEndFadeOut.RemoveAllListeners();
+			if (!reverse) {
+				this.curSeconds = 0.0f;
+			}
+			else {
+				this.curSeconds = 1.0f;
+			}
 		}
 
 		public void Update() {
+			if (!this.isPlay)
+				return;
 
+			if (!isReverse) {
+				this.curSeconds += this.AddSeconds();
+				this.FadeOut();
+				if (curSeconds >= 1.0f) {
+					this.OnEndFadeOut.Invoke();
+				}
+			}
+			else {
+				this.curSeconds -= this.AddSeconds();
+				this.FadeIn();
+				if (curSeconds <= 0.0f) {
+					this.OnEndFadeIn.Invoke();
+				}
+			}
 		}
 
-		protected abstract void UniqueFadeIn(float seconds);
-		protected abstract void UniqueFadeOut(float seconds);
+		public void Play(
+			bool reverse = false,
+			float seconds = 1.0f,
+			bool initialize = false) {
+			if (initialize) {
+				this.Initialize(reverse);
+			}
+
+			this.isPlay = true;
+			this.isReverse = reverse;
+			this.fadeSeconds = seconds;
+		}
+
+		public void Stop() {
+			this.isPlay = false;
+		}
+
+		public void Resume() {
+			this.isPlay = true;
+		}
+
+		protected abstract void FadeOut();
+
+		protected abstract void FadeIn();
+
+		public void AddEndFadeOutEvent(UnityAction func) {
+			OnEndFadeOut.AddListener(func);
+		}
+
+		public void RemoveEndFadeOutEvent(UnityAction func) {
+			OnEndFadeOut.RemoveListener(func);
+		}
+
+		public void AddEndFadeInEvent(UnityAction func) {
+			OnEndFadeIn.AddListener(func);
+		}
+
+		public void RemoveEndFadeInEvent(UnityAction func) {
+			OnEndFadeIn.RemoveListener(func);
+		}
+
+		private float AddSeconds() {
+			return Time.deltaTime / this.fadeSeconds;
+		}
 	}
 }

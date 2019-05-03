@@ -7,6 +7,7 @@ namespace MSyun.Common.Permanentry {
 	using Resource;
 	using Scene;
 	using Input;
+	using Fade;
 
 	public class PermanentryManager : MonoBehaviour {
 
@@ -25,8 +26,12 @@ namespace MSyun.Common.Permanentry {
 		}
 		#endregion // singleton
 
+		[SerializeField]
+		private FadeFactory fadeFactory;
+
 		public ResourceManager ResourceManager { private set; get; }
 		public SceneController SceneManager { private set; get; }
+		public FadeManager FadeManager { private set; get; }
 		public GameController GameController { private set; get; }
 
 		private void Awake() {
@@ -38,11 +43,14 @@ namespace MSyun.Common.Permanentry {
 			this.ResourceManager = new ResourceManager();
 			this.SceneManager = new SceneController();
 			this.GameController = new GameController();
+			this.FadeManager = new FadeManager();
+			this.FadeManager.factory = this.fadeFactory;
 			this.GameController.Initialize();
 		}
 
 		private void Update() {
 			this.GameController.Update();
+			this.FadeManager.Update();
 		}
 
 		private void OnDestroy() {

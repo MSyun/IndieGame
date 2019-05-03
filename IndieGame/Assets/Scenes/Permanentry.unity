@@ -124,8 +124,9 @@ GameObject:
   - component: {fileID: 869035549}
   - component: {fileID: 869035548}
   - component: {fileID: 869035547}
+  - component: {fileID: 869035551}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: FaderCanvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -211,6 +212,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &869035551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 869035546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a653d1911d8760d41ad2e436050df9e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sampleImage: {fileID: 1052532051}
 --- !u!1 &1052532049
 GameObject:
   m_ObjectHideFlags: 0
@@ -328,4 +342,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98ce7efc3401ae34da40dffaa286d455, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  image: {fileID: 1052532051}
+  fadeFactory: {fileID: 869035551}

@@ -13,26 +13,22 @@ namespace MSyun.Common.Fade {
 			this.image = image;
 		}
 
-		protected override void UniqueFadeIn(float seconds) {
-			float curTime = 0.0f;
-			Color color = image.color;
-			while (seconds > curTime) {
-				curTime += 0.01f;
-
-				color.a = Mathf.Lerp(0.0f, 1.0f, seconds / curTime);
-				image.color = color;
-			}
+		protected override void FadeIn() {
+			this.AlphaChange();
 		}
 
-		protected override void UniqueFadeOut(float seconds) {
-			float curTime = 0.0f;
-			Color color = image.color;
-			while (seconds > curTime) {
-				curTime += 0.01f;
+		protected override void FadeOut() {
+			this.AlphaChange();
+		}
 
-				color.a = Mathf.Lerp(1.0f, 0.0f, seconds / curTime);
-				image.color = color;
+		private void AlphaChange() {
+			if (this.image == null) {
+				return;
 			}
+
+			Color color = image.color;
+			color.a = Mathf.Lerp(0.0f, 1.0f, this.curSeconds);
+			image.color = color;
 		}
 	}
 }
