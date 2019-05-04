@@ -4,100 +4,141 @@ using UnityEngine;
 
 namespace MSyun.Common.Input {
 
-	using Controller;
+	using Game.Input;
 
-	public class GameController {
+	public enum InputType {
+		None,
+		System,
+		Game,
+		GameMenu,
+	}
 
-		public enum Type {
-			Pc,
-			Pad,
-			Phone
-		};
+	/// <summary>
+	/// System : 1つで十分、やるなら引数にプレイヤー番号渡すくらい
+	/// Game : キャラクター数分作成
+	/// Menu : 1つで十分
+	/// </summary>
+	public sealed class GameController {
 
 		public const int MaxPlayerCount = 4;
 		public const int NotFoundPlayerNumber = -1;
 
-		private IController[] controllers = new IController[MaxPlayerCount];
+		/// NOTE : 最大8人までの状態
+		/// 必要があれば変更
+		private byte usePlayerNumber = (byte)0x0000;
+
+		private IInputModule systemModule;
+		private IInputModule[] gameModules = new IInputModule[MaxPlayerCount];
+		private IInputModule menuModule;
+
+		public InputType TypeCurrent { private set; get; } = InputType.System;
 
 		public void Initialize() {
-			this.Add(Type.Pc);
+
 		}
 
 		public void Release() {
-			for(int i = 0; i < this.controllers.Length; i++) {
-				if (this.controllers[i] == null)
-					continue;
-
-				this.Remove(i);
+			for(int i = 0; i < MaxPlayerCount; i++) {
+				this.RemovePlayer(i);
 			}
+
+			this.DeleteModuleSystem();
+			this.DeleteModuleMenu();
 		}
 
-		public int Add(Type type) {
-			int playerNum = this.GetEmptyPlayerNumber();
+		public void SetType(InputType type) {
+			this.TypeCurrent = type;
+		}
+
+		public IInputModule CreateModuleSystem() {
+			if (this.systemModule == null)
+				this.systemModule = new SystemInputModule();
+
+			return this.systemModule;
+		}
+
+		public void DeleteModuleSystem() {
+			if (this.systemModule == null)
+				return;
+
+			this.systemModule.Delete();
+			this.systemModule = null;
+		}
+
+		public IInputModule CreateModuleGameMenu() {
+			if (this.menuModule == null)
+				this.menuModule = new MenuInputModule();
+
+			return this.menuModule;
+		}
+
+		public void DeleteModuleMenu() {
+			if (this.menuModule == null)
+				return;
+
+			this.menuModule.Delete();
+			this.menuModule = null;
+		}
+
+		public IInputModule CreateModulePlayer(ref int playerNum) {
+			playerNum = this.GetEmptyPlayerNumber();
 			if (playerNum == NotFoundPlayerNumber) {
 				Debug.LogError("GameController.Create : Maximum number of people already");
-				return NotFoundPlayerNumber;
+				return null;
 			}
 
-			IController controller = null;
-			switch (type) {
-				case Type.Pc:
-					controller = new PCController();
-					break;
+			this.gameModules[playerNum] = new ActionInputModule();
 
-				case Type.Pad:
-					controller = new PadController();
-					break;
-
-				case Type.Phone:
-					controller = new PhoneController();
-					break;
-
-				default:
-					Debug.LogError("GameController.Create : Not found device type");
-					return NotFoundPlayerNumber;
-			};
-
-			controller.Create();
-			this.controllers[playerNum] = controller;
-
-			return playerNum;
+			return this.gameModules[playerNum];
 		}
 
-		public void Remove(int playerNum) {
-			if (this.controllers[playerNum] == null) {
-				Debug.LogError("This player number is not connecting(" + playerNum + ")");
+		public void RemovePlayer(int playerNum) {
+			bool use = false;
+			for (int i = 0; i < MaxPlayerCount; i++) {
+				if ((this.usePlayerNumber & (0x0001 << i)) != 0x0001)
+					continue;
+
+				use = true;
+				this.usePlayerNumber &= (byte)(0x1110 << i);
 				return;
 			}
-
-			this.controllers[playerNum].Destroy();
-			this.controllers[playerNum] = null;
 		}
 
 		private int GetEmptyPlayerNumber() {
 			int playerNum = NotFoundPlayerNumber;
 			for (int i = 0; i < MaxPlayerCount; i++) {
-				if (this.controllers[i] != null)
+				if ((this.usePlayerNumber & (0x0001 << i)) == 0x0001)
 					continue;
 
 				playerNum = i;
+				this.usePlayerNumber |= (byte)(0x0001 << i);
+				break;
 			}
 
 			return playerNum;
 		}
 
-		private IController GetController(int playerNum) {
-			if (this.controllers[playerNum] == null) {
-				Debug.LogError("This player number is not connecting(" + playerNum + ")");
-				return null;
-			}
-
-			return this.controllers[playerNum];
-		}
-
 		public void Update() {
-			foreach (var controller in this.controllers) {
-				controller.KeyCheck();
+			switch (this.TypeCurrent) {
+				case InputType.None:
+					break;
+
+				case InputType.System:
+					this.systemModule?.Update();
+					break;
+
+				case InputType.Game:
+					for (int i = 0; i < MaxPlayerCount; i++) {
+						this.gameModules[i]?.Update();
+					}
+					break;
+
+				case InputType.GameMenu:
+					this.menuModule?.Update();
+					break;
+
+				default:
+					break;
 			}
 		}
 	}
