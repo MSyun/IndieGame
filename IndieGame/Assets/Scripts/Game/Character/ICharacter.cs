@@ -8,5 +8,10 @@ namespace MSyun.Game.Object {
 
 	public abstract class ICharacter : IObject {
 		protected IAttackModule attackModule;
+
+		private void Update() {
+
+		}
+
 	}
 }
