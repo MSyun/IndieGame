@@ -61,11 +61,14 @@ namespace MSyun.Common.Scene {
 			callback("Load Scene Complete : " + name);
 		}
 
-		public async void UnloadSceneAsync(SceneName.Scene name, Action<string> callback) {
+		public async UniTask UnloadSceneAsync(SceneName.Scene name, Action<string> callback) {
 			await SceneManager.UnloadSceneAsync((int)name).
 				ConfigureAwait(Progress.Create<float>(x => Debug.Log(x)));
 
 			this.currentScene.Remove(name);
+
+			if (callback == null)
+				return;
 
 			callback("Unload Scene Complete : " + name);
 		}
