@@ -12,5 +12,12 @@ namespace MSyun.Game.Input {
 			
 		}
 
+		public bool A() {
+			if (UnityEngine.Input.GetKeyDown(KeyCode.Space))
+				return true;
+
+			return false;
+		}
+
 	}
 }
