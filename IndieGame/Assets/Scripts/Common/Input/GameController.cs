@@ -27,9 +27,9 @@ namespace MSyun.Common.Input {
 		/// 必要があれば変更
 		private byte usePlayerNumber = (byte)0x0000;
 
-		private IInputModule systemModule;
+		private SystemInputModule systemModule;
 		private IInputModule[] gameModules = new IInputModule[MaxPlayerCount];
-		private IInputModule menuModule;
+		private MenuInputModule menuModule;
 
 		public InputType TypeCurrent { private set; get; } = InputType.System;
 
@@ -50,7 +50,7 @@ namespace MSyun.Common.Input {
 			this.TypeCurrent = type;
 		}
 
-		public IInputModule CreateModuleSystem() {
+		public SystemInputModule CreateModuleSystem() {
 			if (this.systemModule == null)
 				this.systemModule = new SystemInputModule();
 
